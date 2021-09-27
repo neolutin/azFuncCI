@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  dataApiBuild:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: cd DataApi && dotnet restore
+      
+    - name: Build
+      run: cd DataApi && dotnet build --no-restore  -c Release
+    - name: Test
+      run: cd DataApi && dotnet test --no-build --verbosity normal -c Release
+    
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: DataApi
+        path: DataApi/bin/Release
+  
