@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionCompute", "FunctionCompute\FunctionCompute.csproj", "{A40673AA-0B56-41C4-816C-8E924D629AC3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataApi", "DataApi\DataApi.csproj", "{9C7F206A-DC9A-4B67-B595-26E6C840C517}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A40673AA-0B56-41C4-816C-8E924D629AC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A40673AA-0B56-41C4-816C-8E924D629AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A40673AA-0B56-41C4-816C-8E924D629AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A40673AA-0B56-41C4-816C-8E924D629AC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C7F206A-DC9A-4B67-B595-26E6C840C517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C7F206A-DC9A-4B67-B595-26E6C840C517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C7F206A-DC9A-4B67-B595-26E6C840C517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C7F206A-DC9A-4B67-B595-26E6C840C517}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56CEF042-7204-44B9-88A8-1B80D7B156B9}
+	EndGlobalSection
+EndGlobal
