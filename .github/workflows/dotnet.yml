@@ -1,16 +1,47 @@
-name: .NET
+name: azFuncCI
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  dataApiBuild:
-
+  terraformPack:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+      with:
+        terraform_version: 1.0
+    - name: Replace env vars in file
+      uses: falnyr/replace-env-vars-action@v1.2.1
+      env:
+        TERRAFORMSTORAGE_KEY: ${{ secrets.TERRAFORMSTORAGE_KEY }}
+        AZURETENANT_ID: ${{ secrets.AZURETENANT_ID }}
+        AZURESUSCRIPTION_ID: ${{ secrets.AZURESUSCRIPTION_ID }}
+        TERRAFORMCLIENT_ID: ${{ secrets.TERRAFORMCLIENT_ID }}
+        TERRAFORMCLIENT_SECRET: ${{ secrets.TERRAFORMCLIENT_SECRET }}
+      with:
+        filename: terraform/provider.tf
+    - name: Init
+      run: cat provider.tf && terraform init
+      working-directory: terraform
 
+    - name: Plan
+      run: terraform plan -input=false -out='out.tfplan'
+      working-directory: terraform
+      
+    - name: Upload an Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: terraform
+        path: terraform/out.tfplan
+        
+  dataApiBuild:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
@@ -18,16 +49,71 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: cd DataApi && dotnet restore
-      
+      run: dotnet restore
+      working-directory: DataApi
     - name: Build
-      run: cd DataApi && dotnet build --no-restore  -c Release
+      run: dotnet build --no-restore  -c Release
+      working-directory: DataApi
     - name: Test
-      run: cd DataApi && dotnet test --no-build --verbosity normal -c Release
+      run: dotnet test --no-build --verbosity normal -c Release
+      working-directory: DataApi
     
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
         name: DataApi
         path: DataApi/bin/Release
-  
+
+  functionBuild:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: FunctionCompute
+    - name: Build
+      run: dotnet build --no-restore  -c Release
+      working-directory: FunctionCompute
+    - name: Test
+      run: dotnet test --no-build --verbosity normal -c Release
+      working-directory: FunctionCompute
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: FunctionCompute
+        path: FunctionCompute/bin/Release
+
+  deployInfra:
+    environment:
+      name: funcApiDev
+    needs: terraformPack
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+      with:
+        terraform_version: 1.0
+    - name: Download terraform plan
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: terraform
+    - name: Apply
+      run: terraform apply terraform/out.tfplan
+
+  deployDataApi:
+    needs: [dataApiBuild, deployInfra]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Todo
+      run: echo todo
+
+  deployFunction:
+    needs: [functionBuild, deployInfra]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Todo
+      run: echo todo

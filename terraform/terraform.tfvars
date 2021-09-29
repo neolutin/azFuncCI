@@ -1,0 +1,7 @@
+resource_group_name   = "RG-AZFUNCCI-DEV-01"
+location              = "West Europe"
+app_service_plan_name = "ASP-WESTEUROPE-AZFUNCCI-DEV-01"
+storage_account_name  = "saazfunccidev"
+function_app_name     = "func-ci-dev-01"
+api_name              = "dataapi"
+dataapi_url           = "http://test.com"
