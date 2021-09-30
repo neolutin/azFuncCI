@@ -5,7 +5,7 @@ terraform {
     storage_account_name = "saterraformneolutin"
     container_name       = "azfuncci"
     key                  = "dev01/terraform.tfstate"
-    access_key           = "__TERRAFORMSTORAGEKEY__"
+    access_key           = "__TERRAFORMSTORAGE_KEY__"
   }
 }
 
@@ -13,11 +13,11 @@ terraform {
 provider "azurerm" {
   features {}
   skip_provider_registration = "true"
-  environment = "public"
-  tenant_id               = "__AZURETENANT_ID__"
-  subscription_id         = "__AZURESUSCRIPTION_ID__"
-  client_id               = "__TERRAFORMCLIENT_ID__"
-  client_secret           = "__TERRAFORMCLIENT_SECRET__"
+  environment                = "public"
+  tenant_id                  = "__AZURETENANT_ID__"
+  subscription_id            = "__AZURESUSCRIPTION_ID__"
+  client_id                  = "__TERRAFORMCLIENT_ID__"
+  client_secret              = "__TERRAFORMCLIENT_SECRET__"
 }
 
 # Make client_id, tenant_id, subscription_id and object_id variables

@@ -27,10 +27,12 @@ jobs:
       with:
         filename: terraform/provider.tf
     - name: Init
-      run: cd terraform && terraform init
+      run: cat provider.tf && terraform init
+      working-directory: terraform
 
     - name: Plan
-      run: cd terraform && terraform plan -input=false -out='out.tfplan'
+      run: terraform plan -input=false -out='out.tfplan'
+      working-directory: terraform
       
     - name: Upload an Artifact
       uses: actions/upload-artifact@v2.2.4
@@ -47,12 +49,14 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: cd DataApi && dotnet restore
-      
+      run: dotnet restore
+      working-directory: DataApi
     - name: Build
-      run: cd DataApi && dotnet build --no-restore  -c Release
+      run: dotnet build --no-restore  -c Release
+      working-directory: DataApi
     - name: Test
-      run: cd DataApi && dotnet test --no-build --verbosity normal -c Release
+      run: dotnet test --no-build --verbosity normal -c Release
+      working-directory: DataApi
     
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
