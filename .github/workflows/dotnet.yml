@@ -27,14 +27,14 @@ jobs:
       with:
         filename: terraform/provider.tf
     - name: Init
-      run: cat provider.tf && terraform init
+      run: terraform init
       working-directory: terraform
 
     - name: Plan
       run: terraform plan -input=false -out='out.tfplan'
       working-directory: terraform
       
-    - name: Upload an Artifact
+    - name: Upload terraform Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
         name: terraform
@@ -58,11 +58,11 @@ jobs:
       run: dotnet test --no-build --verbosity normal -c Release
       working-directory: DataApi
     
-    - name: Upload a Build Artifact
+    - name: Upload DataApi Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
         name: DataApi
-        path: DataApi/bin/Release
+        path: DataApi/bin/Release/net5.0
 
   functionBuild:
     runs-on: ubuntu-latest
@@ -85,7 +85,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: FunctionCompute
-        path: FunctionCompute/bin/Release
+        path: FunctionCompute/bin/Release/net5.0
 
   deployInfra:
     environment:
@@ -93,14 +93,15 @@ jobs:
     needs: terraformPack
     runs-on: ubuntu-latest
     steps:
+    - name: Download terraform Artifact
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: terraform
+        path: terraform
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1.2.1
       with:
         terraform_version: 1.0
-    - name: Download terraform plan
-      uses: actions/download-artifact@v2.0.10
-      with:
-        name: terraform
     - name: Apply
       run: terraform apply terraform/out.tfplan
 
@@ -108,12 +109,22 @@ jobs:
     needs: [dataApiBuild, deployInfra]
     runs-on: ubuntu-latest
     steps:
-    - name: Todo
-      run: echo todo
+    - name: Download DataApi Artifact
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: DataApi
+    - name: Azure Functions Action
+      uses: Azure/functions-action@v1.4.4
+      with:
+        app-name: DataApi
+        package: DataApi
 
   deployFunction:
     needs: [functionBuild, deployInfra]
     runs-on: ubuntu-latest
     steps:
-    - name: Todo
-      run: echo todo
+    - name: Azure Functions Action
+      uses: Azure/functions-action@v1.4.4
+      with:
+        app-name: FunctionCompute
+        package: FunctionCompute
