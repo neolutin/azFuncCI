@@ -53,7 +53,7 @@ resource "azurerm_function_app" "fnapp" {
     # Azure Functions configuration
     DataApiUrl                      = var.dataapi_url
   }
-
+  
   identity {
     type = "SystemAssigned"
   }
@@ -63,6 +63,5 @@ resource "azurerm_function_app" "fnapp" {
   storage_account_name       = azurerm_storage_account.fnapp.name
   storage_account_access_key = azurerm_storage_account.fnapp.primary_access_key
   # dotnet core version (app_settings.FUNCTIONS_EXTENSION_VERSION never set/updated)
-  version                    = "~5"
   https_only                 = true
 }

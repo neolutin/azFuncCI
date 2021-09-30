@@ -71,7 +71,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 3.1.x
     - name: Restore dependencies
       run: dotnet restore
       working-directory: FunctionCompute
@@ -102,6 +102,9 @@ jobs:
       uses: hashicorp/setup-terraform@v1.2.1
       with:
         terraform_version: 1.0
+    - name: Init
+      run: terraform init
+      working-directory: terraform
     - name: Apply
       run: terraform apply terraform/out.tfplan
 
