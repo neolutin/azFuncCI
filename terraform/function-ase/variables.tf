@@ -36,3 +36,8 @@ variable "tags" {
     }
     description = "Azure Resource Tags"
 }
+
+variable "primary_access_key" {
+    type = string
+    description = "azurerm_storage_account access key"
+}

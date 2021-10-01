@@ -13,6 +13,11 @@ variable "app_service_plan_name" {
   type        = string
 }
 
+variable "api_service_plan_name" {
+  description = "The name of the app service plan in which the api will be created."
+  type        = string
+}
+
 variable "storage_account_name" {
   description = "The name of the storage account for state management."
   type        = string

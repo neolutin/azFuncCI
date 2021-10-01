@@ -34,11 +34,10 @@ jobs:
     - name: Init
       run: terraform init
       working-directory: terraform
-
     - name: Plan
       run: terraform plan -input=false -out='out.tfplan'
       working-directory: terraform
-        
+
   dataApiBuild:
     runs-on: ubuntu-latest
     steps:
@@ -101,16 +100,8 @@ jobs:
       uses: hashicorp/setup-terraform@v1.2.1
       with:
         terraform_version: 1.0
-    - name: Init
-      run: terraform init
-      working-directory: terraform
-
-    - name: Plan
-      run: terraform plan -input=false -out='out.tfplan'
-      working-directory: terraform
-      
     - name: Deploy
-      run: terraform apply out.tfplan
+      run: terraform init && terraform plan -input=false -out='out.tfplan' && terraform apply out.tfplan
       working-directory: terraform
 
   deployDataApi:
@@ -121,8 +112,11 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
         name: DataApi
-    - name: Azure Functions Action
-      uses: Azure/functions-action@v1.4.4
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
       with:
         app-name: DataApi
         package: DataApi
@@ -131,6 +125,13 @@ jobs:
     needs: [functionBuild, deployInfra]
     runs-on: ubuntu-latest
     steps:
+    - name: Download FunctionCompute Artifact
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: FunctionCompute
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Azure Functions Action
       uses: Azure/functions-action@v1.4.4
       with:
