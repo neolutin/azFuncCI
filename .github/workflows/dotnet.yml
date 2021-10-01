@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: terraform
-        path: terraform/out.tfplan
+        path: terraform
         
   dataApiBuild:
     runs-on: ubuntu-latest
@@ -105,8 +105,12 @@ jobs:
     - name: Init
       run: terraform init
       working-directory: terraform
+    - name: Plan
+      run: terraform plan -input=false
+      working-directory: terraform
     - name: Apply
-      run: terraform apply terraform/out.tfplan
+      run: terraform apply out.tfplan
+      working-directory: terraform
 
   deployDataApi:
     needs: [dataApiBuild, deployInfra]
