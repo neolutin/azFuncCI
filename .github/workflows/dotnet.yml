@@ -26,6 +26,11 @@ jobs:
         TERRAFORMCLIENT_SECRET: ${{ secrets.TERRAFORMCLIENT_SECRET }}
       with:
         filename: terraform/provider.tf
+    - name: Upload terraform Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: terraform
+        path: terraform
     - name: Init
       run: terraform init
       working-directory: terraform
@@ -33,12 +38,6 @@ jobs:
     - name: Plan
       run: terraform plan -input=false -out='out.tfplan'
       working-directory: terraform
-      
-    - name: Upload terraform Artifact
-      uses: actions/upload-artifact@v2.2.4
-      with:
-        name: terraform
-        path: terraform
         
   dataApiBuild:
     runs-on: ubuntu-latest
@@ -85,7 +84,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: FunctionCompute
-        path: FunctionCompute/bin/Release/net5.0
+        path: FunctionCompute/bin/Release/netcoreapp3.1
 
   deployInfra:
     environment:
@@ -105,10 +104,12 @@ jobs:
     - name: Init
       run: terraform init
       working-directory: terraform
+
     - name: Plan
-      run: terraform plan -input=false
+      run: terraform plan -input=false -out='out.tfplan'
       working-directory: terraform
-    - name: Apply
+      
+    - name: Deploy
       run: terraform apply out.tfplan
       working-directory: terraform
 
