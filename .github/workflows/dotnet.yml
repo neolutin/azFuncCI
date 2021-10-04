@@ -117,15 +117,14 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
         name: DataApi
-    # Issue with az login credentials, need further investigations
-    # - uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-    # - name: Azure WebApp
-    #   uses: Azure/webapps-deploy@v2
-    #   with:
-    #     app-name: DataApi
-    #     package: DataApi
+    - uses: azure/login@v1
+      with:
+        credentials: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
+      with:
+        app-name: DataApi
+        package: DataApi
 
   deployFunction:
     needs: [functionBuild, deployInfra]
@@ -135,21 +134,22 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
         name: FunctionCompute
-    # - name: Stop service befor deployment
+    # - name: Stop service before deployment
     #   shell: pwsh
     #   run: |
     #     $securedString = "${{ secrets.ADMIN_FOR_HOST }}" | ConvertTo-SecureString -Force -AsPlainText
     #     [pscredential]$credential = New-Object System.Management.Automation.PSCredential (${{ env.ADMIN_NAME }}, $securedString)
     #     Invoke-Command -ComputerName ${{ env.SERVICE_HOST }} -Credential $credential -ScriptBlock { Stop-Service -Name ${{ env.SERVICE_NAME }} }
+    # Issue with az login credentials, need further investigations
     # - uses: azure/login@v1
     #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+    #     credentials: ${{ secrets.AZURE_CREDENTIALS }}
     # - name: Azure Functions Action
     #   uses: Azure/functions-action@v1.4.4
     #   with:
     #     app-name: FunctionCompute
     #     package: FunctionCompute
-    # - name: Start service befor deployment
+    # - name: Start service after deployment
     #   shell: pwsh
     #   run: |
     #     $securedString = "${{ secrets.ADMIN_FOR_HOST }}" | ConvertTo-SecureString -Force -AsPlainText
