@@ -126,7 +126,7 @@ jobs:
         name: DataApi
     - uses: azure/login@v1
       with:
-        credentials: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Azure WebApp
       uses: Azure/webapps-deploy@v2
       with:
