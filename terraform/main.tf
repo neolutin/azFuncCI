@@ -3,6 +3,10 @@ resource "azurerm_resource_group" "azfuncci" {
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
+  identity = {
+    type = "UserAssigned"
+    identity_ids = ["9121c17c-6e30-4c56-a079-e2847d84931a"]
+  }
 }
 
 # Storage
