@@ -4,13 +4,15 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
   workflow_dispatch:
-
-env:
-  SERVICE_HOST: winvmwithservice.domain.ext
-  SERVICE_NAME: servicetostop
-  ADMIN_NAME: svcadmin
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Manual tag'
 
 jobs:
   terraformPack:
@@ -117,15 +119,14 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
         name: DataApi
-    # Issue with az login credentials, need further investigations
-    # - uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-    # - name: Azure WebApp
-    #   uses: Azure/webapps-deploy@v2
-    #   with:
-    #     app-name: DataApi
-    #     package: DataApi
+    - uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.APPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.APPSERVICE_SECRET }}","subscriptionId":"${{ secrets.AZURESUSCRIPTION_ID }}","tenantId":"${{ secrets.AZURETENANT_ID }}"}'
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
+      with:
+        app-name: DataApi
+        package: DataApi
 
   deployFunction:
     needs: [functionBuild, deployInfra]
@@ -135,12 +136,7 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
         name: FunctionCompute
-    # - name: Stop service befor deployment
-    #   shell: pwsh
-    #   run: |
-    #     $securedString = "${{ secrets.ADMIN_FOR_HOST }}" | ConvertTo-SecureString -Force -AsPlainText
-    #     [pscredential]$credential = New-Object System.Management.Automation.PSCredential (${{ env.ADMIN_NAME }}, $securedString)
-    #     Invoke-Command -ComputerName ${{ env.SERVICE_HOST }} -Credential $credential -ScriptBlock { Stop-Service -Name ${{ env.SERVICE_NAME }} }
+    # Issue with az login credentials, need further investigations
     # - uses: azure/login@v1
     #   with:
     #     creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -149,9 +145,3 @@ jobs:
     #   with:
     #     app-name: FunctionCompute
     #     package: FunctionCompute
-    # - name: Start service befor deployment
-    #   shell: pwsh
-    #   run: |
-    #     $securedString = "${{ secrets.ADMIN_FOR_HOST }}" | ConvertTo-SecureString -Force -AsPlainText
-    #     [pscredential]$credential = New-Object System.Management.Automation.PSCredential (${{ env.ADMIN_NAME }}, $securedString)
-    #     Invoke-Command -ComputerName ${{ env.SERVICE_HOST }} -Credential $credential -ScriptBlock { Start-Service -Name ${{ env.SERVICE_NAME }} }

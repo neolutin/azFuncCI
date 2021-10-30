@@ -1,5 +1,4 @@
 resource_group_name   = "RG-AZFUNCCI-DEV-01"
-location              = "West Europe"
 app_service_plan_name = "ASP-WESTEUROPE-AZFUNCCI-DEV-01"
 api_service_plan_name = "ASP-WESTEUROPE-API-DEV-01"
 storage_account_name  = "saazfunccidev"
