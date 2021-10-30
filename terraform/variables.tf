@@ -3,11 +3,6 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "location" {
-  description = "Location of the ressources."
-  type        = string
-}
-
 variable "app_service_plan_name" {
   description = "The name of the app service plan in which the function app will be created."
   type        = string

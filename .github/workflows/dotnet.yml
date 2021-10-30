@@ -14,11 +14,6 @@ on:
       tags:
         description: 'Manual tag'
 
-env:
-  SERVICE_HOST: winvmwithservice.domain.ext
-  SERVICE_NAME: servicetostop
-  ADMIN_NAME: svcadmin
-
 jobs:
   terraformPack:
     runs-on: ubuntu-latest
@@ -126,7 +121,7 @@ jobs:
         name: DataApi
     - uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: '{"clientId":"${{ secrets.APPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.APPSERVICE_SECRET }}","subscriptionId":"${{ secrets.AZURESUSCRIPTION_ID }}","tenantId":"${{ secrets.AZURETENANT_ID }}"}'
     - name: Azure WebApp
       uses: Azure/webapps-deploy@v2
       with:
@@ -141,12 +136,6 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
         name: FunctionCompute
-    # - name: Stop service before deployment
-    #   shell: pwsh
-    #   run: |
-    #     $securedString = "${{ secrets.ADMIN_FOR_HOST }}" | ConvertTo-SecureString -Force -AsPlainText
-    #     [pscredential]$credential = New-Object System.Management.Automation.PSCredential (${{ env.ADMIN_NAME }}, $securedString)
-    #     Invoke-Command -ComputerName ${{ env.SERVICE_HOST }} -Credential $credential -ScriptBlock { Stop-Service -Name ${{ env.SERVICE_NAME }} }
     # Issue with az login credentials, need further investigations
     # - uses: azure/login@v1
     #   with:
@@ -156,9 +145,3 @@ jobs:
     #   with:
     #     app-name: FunctionCompute
     #     package: FunctionCompute
-    # - name: Start service after deployment
-    #   shell: pwsh
-    #   run: |
-    #     $securedString = "${{ secrets.ADMIN_FOR_HOST }}" | ConvertTo-SecureString -Force -AsPlainText
-    #     [pscredential]$credential = New-Object System.Management.Automation.PSCredential (${{ env.ADMIN_NAME }}, $securedString)
-    #     Invoke-Command -ComputerName ${{ env.SERVICE_HOST }} -Credential $credential -ScriptBlock { Start-Service -Name ${{ env.SERVICE_NAME }} }
